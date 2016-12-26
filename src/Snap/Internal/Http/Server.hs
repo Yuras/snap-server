@@ -249,7 +249,8 @@ logA alog = maybe (\_ _ -> return ()) logA' alog
 logA' :: (ByteString -> IO ()) -> Request -> Response -> IO ()
 logA' logger req rsp = do
     let hdrs      = rqHeaders req
-    let host      = rqRemoteAddr req
+    let host      = fromMaybe (rqRemoteAddr req) $
+          getHeader "X-Forwarded-For" req
     let user      = Nothing -- TODO we don't do authentication yet
     let (v, v')   = rqVersion req
     let ver       = S.concat [ "HTTP/", bshow v, ".", bshow v' ]
