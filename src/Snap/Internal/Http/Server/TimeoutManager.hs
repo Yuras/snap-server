@@ -172,8 +172,8 @@ modify th f = do
 -- | Cancel a timeout.
 cancel :: TimeoutThread -> IO ()
 cancel h = E.uninterruptibleMask_ $ do
-    T.cancel $ _thread h
-    writeIORef (_state h) canceled
+    T.cancel (_thread h)
+      `E.finally` writeIORef (_state h) canceled
 {-# INLINE cancel #-}
 
 

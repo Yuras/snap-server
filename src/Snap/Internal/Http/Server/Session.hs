@@ -205,7 +205,10 @@ httpAcceptLoop serverHandler serverConfig acceptFunc = runLoops
                                       remotePort
                                       readEnd
                                       writeEnd
-            restore (session psd) `E.finally` cleanup
+            let cancel = do
+                  th <- readMVar thMVar
+                  TM.cancel th
+            restore (session psd) `E.finally` cleanup `E.finally` cancel
 
     --------------------------------------------------------------------------
     session psd = do
